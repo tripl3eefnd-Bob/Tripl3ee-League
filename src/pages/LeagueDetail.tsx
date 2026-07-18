@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Trophy, Users, Calendar, BarChart3, Swords, Download, Settings } from 'lucide-react'
+import { ArrowLeft, Trophy, Users, Calendar, BarChart3, Swords, Download, Settings, Repeat } from 'lucide-react'
 import { useT } from '../i18n'
 import { getLeague, getTeams, getMatches, deleteLeague } from '../lib/db'
 import type { League, Team, MatchWithTeams } from '../types'
@@ -10,14 +10,16 @@ import TeamsTab from '../components/TeamsTab'
 import StatsTab from '../components/StatsTab'
 import KnockoutTab from '../components/KnockoutTab'
 import ExportTab from '../components/ExportTab'
+import HeadToHeadTab from '../components/HeadToHeadTab'
 
-type Tab = 'standings' | 'fixtures' | 'teams' | 'stats' | 'knockout' | 'export'
+type Tab = 'standings' | 'fixtures' | 'teams' | 'stats' | 'knockout' | 'h2h' | 'export'
 
 const tabs: { id: Tab; icon: any; label: string }[] = [
   { id: 'standings', icon: Trophy, label: 'Klasemen' },
   { id: 'fixtures', icon: Calendar, label: 'Jadwal' },
   { id: 'teams', icon: Users, label: 'Tim' },
   { id: 'stats', icon: BarChart3, label: 'Statistik' },
+  { id: 'h2h', icon: Repeat, label: 'H2H' },
   { id: 'knockout', icon: Swords, label: 'Knockout' },
   { id: 'export', icon: Download, label: 'Export' },
 ]
@@ -70,6 +72,7 @@ export default function LeagueDetail() {
     teams: <TeamsTab league={league} teams={teams} onTeamsChange={setTeams} />,
     stats: <StatsTab league={league} teams={teams} matches={matches} />,
     knockout: <KnockoutTab league={league} teams={teams} matches={matches} />,
+    h2h: <HeadToHeadTab league={league} teams={teams} matches={matches} />,
     export: <ExportTab league={league} teams={teams} matches={matches} />,
   }
 

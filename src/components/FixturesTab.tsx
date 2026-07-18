@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react'
-import { Play, SkipForward, Check, Plus, X } from 'lucide-react'
+import { Play, SkipForward, Check, Plus, X, RefreshCw } from 'lucide-react'
 import { useT } from '../i18n'
-import { updateMatch, createMatchEvent, deleteMatchEvent, getMatchEvents } from '../lib/db'
+import { updateMatch, createMatchEvent, deleteMatchEvent, getMatchEvents, createMatches, deleteMatch } from '../lib/db'
+import { generateRoundRobin } from '../lib/utils'
 import type { League, Team, MatchWithTeams, MatchEvent, EventType } from '../types'
 
 interface Props {
@@ -14,11 +15,11 @@ interface Props {
 export default function FixturesTab({ league, teams, matches, onMatchesChange }: Props) {
   const { t } = useT()
   const [filterTeam, setFilterTeam] = useState<string>('')
-  const [selectedMatch, setSelectedMatch] = useState<string | null>(null)
   const [events, setEvents] = useState<MatchEvent[]>([])
   const [showResultModal, setShowResultModal] = useState(false)
   const [resultForm, setResultForm] = useState({ home_score: 0, away_score: 0 })
   const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null)
+  const [generating, setGenerating] = useState(false)
 
   const teamMap = useMemo(() => new Map(teams.map(t => [t.id, t])), [teams])
 
@@ -31,6 +32,41 @@ export default function FixturesTab({ league, teams, matches, onMatchesChange }:
     const mws = new Set(filteredMatches.map(m => m.matchweek))
     return Array.from(mws).sort((a, b) => a - b)
   }, [filteredMatches])
+
+  async function handleGenerateFixtures() {
+    if (teams.length < 2) return
+    setGenerating(true)
+    const fixtures = generateRoundRobin(teams, league.format === 'double')
+    const matchData = fixtures.map(f => ({
+      league_id: league.id,
+      matchweek: f.matchweek,
+      home_team_id: f.home_team_id,
+      away_team_id: f.away_team_id,
+      status: 'scheduled' as const,
+      is_knockout: false,
+      extra_time: false,
+      penalties: false,
+    }))
+    const created = await createMatches(matchData)
+    if (created) {
+      const withTeams = created.map(m => ({
+        ...m,
+        home_team: teamMap.get(m.home_team_id),
+        away_team: teamMap.get(m.away_team_id),
+      }))
+      onMatchesChange([...matches, ...withTeams])
+    }
+    setGenerating(false)
+  }
+
+  async function handleRegenerate() {
+    if (!confirm('Generate ulang akan menghapus semua jadwal dan hasil. Lanjutkan?')) return
+    for (const m of matches) {
+      await deleteMatch(m.id)
+    }
+    onMatchesChange([])
+    await handleGenerateFixtures()
+  }
 
   async function handleStatusChange(match: MatchWithTeams, status: 'played' | 'skipped') {
     const updates: any = { status }
@@ -74,8 +110,7 @@ export default function FixturesTab({ league, teams, matches, onMatchesChange }:
     if (!selectedMatchId || !playerId || minute == null) return
     const match = matches.find(m => m.id === selectedMatchId)
     if (!match) return
-    const isHome = match.home_team_id === teams.find(t => t.players?.some(p => p.id === playerId))?.id
-    const teamId = teams.find(t => t.id === match.home_team_id || t.id === match.away_team_id && t.players?.some(p => p.id === playerId))?.id
+    const teamId = match.home_team_id || match.away_team_id
     if (!teamId) return
     const evt = await createMatchEvent({
       match_id: selectedMatchId,
@@ -94,23 +129,51 @@ export default function FixturesTab({ league, teams, matches, onMatchesChange }:
 
   return (
     <div>
-      {/* Filter */}
-      <div className="mb-4">
-        <label className="text-sm text-slate-400 mb-1 block">{t.match.filter_by_team}</label>
-        <select
-          value={filterTeam}
-          onChange={e => setFilterTeam(e.target.value)}
-          className="w-full max-w-xs px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white focus:border-emerald-500 outline-none"
-        >
-          <option value="">Semua Tim</option>
-          {teams.map(t => (
-            <option key={t.id} value={t.id}>{t.name}</option>
-          ))}
-        </select>
-      </div>
+      {/* Generate / Regenerate */}
+      {matches.length === 0 && teams.length >= 2 ? (
+        <div className="text-center py-16">
+          <RefreshCw className="w-16 h-16 text-slate-700 mx-auto mb-4" />
+          <p className="text-slate-400 mb-2">{teams.length} tim tersedia</p>
+          <p className="text-slate-500 text-sm mb-6">
+            Jadwal {league.format === 'double' ? t.league.double : t.league.single} ({teams.length - 1} pekan{league.format === 'double' ? `, ${(teams.length - 1) * 2} total` : ''})
+          </p>
+          <button
+            onClick={handleGenerateFixtures}
+            disabled={generating}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-500 disabled:opacity-50 transition-colors"
+          >
+            <RefreshCw className={`w-5 h-5 ${generating ? 'animate-spin' : ''}`} />
+            {generating ? t.common.loading : t.common.generate}
+          </button>
+        </div>
+      ) : matches.length > 0 && (
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <div className="flex-1">
+            <label className="text-sm text-slate-400 mb-1 block">{t.match.filter_by_team}</label>
+            <select
+              value={filterTeam}
+              onChange={e => setFilterTeam(e.target.value)}
+              className="w-full max-w-xs px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white focus:border-emerald-500 outline-none"
+            >
+              <option value="">Semua Tim</option>
+              {teams.map(t => (
+                <option key={t.id} value={t.id}>{t.name}</option>
+              ))}
+            </select>
+          </div>
+          <button
+            onClick={handleRegenerate}
+            className="flex items-center gap-1 px-3 py-2 rounded-lg bg-slate-700 text-xs text-slate-400 hover:text-white"
+            title="Regenerate all fixtures"
+          >
+            <RefreshCw className="w-3 h-3" />
+            Regenerate
+          </button>
+        </div>
+      )}
 
       {/* Matchweeks */}
-      {matchweeks.length === 0 ? (
+      {matches.length > 0 && matchweeks.length === 0 ? (
         <div className="text-center py-12 text-slate-500">{t.common.no_data}</div>
       ) : (
         matchweeks.map(mw => {
@@ -128,7 +191,6 @@ export default function FixturesTab({ league, teams, matches, onMatchesChange }:
                 {weekMatches.map(match => {
                   const home = teamMap.get(match.home_team_id)
                   const away = teamMap.get(match.away_team_id)
-                  const isSelected = selectedMatch === match.id
                   return (
                     <div
                       key={match.id}
@@ -198,7 +260,6 @@ export default function FixturesTab({ league, teams, matches, onMatchesChange }:
               </button>
             </div>
 
-            {/* Score Input */}
             <div className="flex items-center justify-center gap-4 mb-6">
               <input
                 type="number"
