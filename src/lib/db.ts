@@ -1,7 +1,7 @@
 import { supabase } from './supabase'
 import type {
   League, Team, Player, Match, MatchEvent, PlayerRating,
-  PlayerSuspension, HallOfFameEntry, SeasonArchive,
+  PlayerSuspension, HallOfFameEntry, SeasonArchive, GlobalPlayer,
 } from '../types'
 
 // --- LEAGUES ---
@@ -78,6 +78,39 @@ export async function deletePlayer(id: string) {
   await supabase.from('players').delete().eq('id', id)
 }
 
+// --- GLOBAL PLAYERS ---
+export async function getGlobalPlayers() {
+  const { data } = await supabase.from('global_players').select('*').order('name')
+  return data as GlobalPlayer[] | null
+}
+
+export async function createGlobalPlayer(player: Omit<GlobalPlayer, 'id' | 'created_at'>) {
+  const { data } = await supabase.from('global_players').insert(player).select().single()
+  return data as GlobalPlayer | null
+}
+
+export async function updateGlobalPlayer(id: string, updates: Partial<GlobalPlayer>) {
+  const { data } = await supabase.from('global_players').update(updates).eq('id', id).select().single()
+  return data as GlobalPlayer | null
+}
+
+export async function deleteGlobalPlayer(id: string) {
+  await supabase.from('global_players').delete().eq('id', id)
+}
+
+export async function importGlobalPlayerToTeam(globalPlayerId: string, teamId: string, number: number) {
+  const { data: gp } = await supabase.from('global_players').select('*').eq('id', globalPlayerId).single()
+  if (!gp) return null
+  const player = await createPlayer({
+    team_id: teamId,
+    name: gp.name,
+    number,
+    position: gp.position,
+    is_active: true,
+  })
+  return player
+}
+
 // --- MATCHES ---
 export async function getMatches(leagueId: string) {
   const { data } = await supabase
@@ -131,8 +164,17 @@ export async function createMatchEvent(event: Omit<MatchEvent, 'id'>) {
   return data as MatchEvent | null
 }
 
+export async function createMatchEvents(events: Omit<MatchEvent, 'id'>[]) {
+  const { data } = await supabase.from('match_events').insert(events).select()
+  return data as MatchEvent[] | null
+}
+
 export async function deleteMatchEvent(id: string) {
   await supabase.from('match_events').delete().eq('id', id)
+}
+
+export async function deleteMatchEventsByMatch(matchId: string) {
+  await supabase.from('match_events').delete().eq('match_id', matchId)
 }
 
 // --- PLAYER RATINGS ---

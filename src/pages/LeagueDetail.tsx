@@ -59,7 +59,7 @@ export default function LeagueDetail() {
   if (!league) return (
     <div className="text-center py-12">
       <p className="text-slate-400 text-sm mb-4">Liga tidak ditemukan</p>
-      <Link to="/leagues" className="text-emerald-400 text-sm hover:underline">Kembali</Link>
+      <Link to="/leagues" className="text-yellow-400 text-sm hover:underline">Kembali</Link>
     </div>
   )
 
@@ -78,7 +78,6 @@ export default function LeagueDetail() {
 
   return (
     <div>
-      {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <Link to="/leagues" className="flex items-center gap-1.5 text-slate-500 hover:text-white text-sm">
           <ArrowLeft className="w-4 h-4" />
@@ -86,28 +85,26 @@ export default function LeagueDetail() {
         </Link>
         <div className="flex items-center gap-2">
           {league.status === 'active' && (
-            <button onClick={handleComplete} className="text-xs text-slate-500 hover:text-emerald-400">Selesai</button>
+            <button onClick={handleComplete} className="text-xs text-slate-500 hover:text-yellow-400">Selesai</button>
           )}
           <button onClick={handleDelete} className="text-xs text-slate-500 hover:text-red-400">Hapus</button>
         </div>
       </div>
 
-      {/* League Info */}
       <div className="mb-5">
         <div className="flex items-center gap-2.5 mb-1">
           <h1 className="text-xl lg:text-2xl font-bold text-white">{league.name}</h1>
           <span className={`text-[10px] px-2 py-0.5 rounded font-medium ${
-            league.status === 'active' ? 'bg-emerald-600/20 text-emerald-400' : 'bg-slate-600/20 text-slate-400'
-          }`}>{league.status === 'active' ? t.league.active : t.league.completed}</span>
+            league.status === 'active' ? 'bg-yellow-600/20 text-yellow-400' : 'bg-slate-600/20 text-slate-400'
+          }`}>{league.status === 'active' ? 'Aktif' : 'Selesai'}</span>
         </div>
         <p className="text-xs text-slate-500">
-          {league.season} · {league.num_teams} tim · {league.format === 'double' ? 'Double RR' : 'Single RR'}
+          {league.season} · {league.category === 'children' ? 'Anak-Anak' : 'Dewasa'} · {league.num_teams} tim · {league.format === 'double' ? 'Double RR' : 'Single RR'}
           {totalMatches > 0 && ` · ${playedMatches}/${totalMatches} main`}
         </p>
       </div>
 
-      {/* Tabs - Flashscore style */}
-      <div className="flex gap-0.5 mb-5 overflow-x-auto scrollbar-hide border-b border-[#2a2f45]">
+      <div className="flex gap-0.5 mb-5 overflow-x-auto scrollbar-hide border-b border-[#1e1e2a]">
         {tabs.filter(tab => tab.id !== 'knockout' || league.competition_type !== 'league').map(tab => {
           const Icon = tab.icon
           const isActive = activeTab === tab.id
@@ -117,7 +114,7 @@ export default function LeagueDetail() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
                 isActive
-                  ? 'text-emerald-400 border-emerald-400'
+                  ? 'text-yellow-400 border-yellow-400'
                   : 'text-slate-500 border-transparent hover:text-slate-300 hover:border-slate-500'
               }`}
             >
@@ -128,7 +125,6 @@ export default function LeagueDetail() {
         })}
       </div>
 
-      {/* Content */}
       {TabContent[activeTab]}
     </div>
   )

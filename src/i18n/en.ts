@@ -1,6 +1,6 @@
 export default {
   app: { name: 'Triple3E League Manager', subtitle: 'PES Manual League Manager' },
-  nav: { dashboard: 'Dashboard', leagues: 'Leagues', settings: 'Settings' },
+  nav: { dashboard: 'Dashboard', leagues: 'Leagues', players: 'Players', settings: 'Settings' },
   league: {
     create: 'Create League',
     edit: 'Edit League',
@@ -22,6 +22,9 @@ export default {
     status: 'Status',
     active: 'Active',
     completed: 'Completed',
+    category: 'Category',
+    children: 'Children',
+    adult: 'Adult',
     delete_confirm: 'Are you sure you want to delete this league?',
   },
   team: {
@@ -46,6 +49,12 @@ export default {
     suspensions: 'Suspensions',
     yellow_cards: 'Yellow Cards',
     red_cards: 'Red Cards',
+    global: 'All Players',
+    add_global: 'Add New Player',
+    select_from_global: 'Select Saved',
+    import_from_global: 'Pick from saved players',
+    search_global: 'Search players...',
+    injury: 'Injury',
   },
   match: {
     fixtures: 'Fixtures',
@@ -72,6 +81,15 @@ export default {
     select_player: 'Select Player',
     available_matches: 'Available Matches',
     filter_by_team: 'Filter by team present',
+    goal_scorer: 'Goal Scorer',
+    goal_assist: 'Assist (optional)',
+    card_type: 'Card Type',
+    match_events: 'Match Timeline',
+    injury: 'Injury',
+    injured_player: 'Injured Player',
+    stats: 'Match Stats',
+    home_goals: 'Home Goals',
+    away_goals: 'Away Goals',
   },
   standing: {
     title: 'Standings',

@@ -6,6 +6,7 @@ import Leagues from './pages/Leagues'
 import CreateLeague from './pages/CreateLeague'
 import LeagueDetail from './pages/LeagueDetail'
 import Settings from './pages/Settings'
+import Players from './pages/Players'
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/leagues" element={<Leagues />} />
           <Route path="/leagues/new" element={<CreateLeague />} />
           <Route path="/leagues/:id" element={<LeagueDetail />} />
+          <Route path="/players" element={<Players />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </Layout>

@@ -2,9 +2,10 @@ export type CompetitionType = 'league' | 'group_knockout' | 'multi_division'
 export type LeagueFormat = 'single' | 'double'
 export type MatchStatus = 'scheduled' | 'played' | 'skipped'
 export type PlayerPosition = 'GK' | 'DF' | 'MF' | 'FW'
-export type EventType = 'goal' | 'assist' | 'yellow_card' | 'red_card' | 'motm' | 'substitution' | 'own_goal' | 'penalty_goal'
+export type EventType = 'goal' | 'assist' | 'yellow_card' | 'red_card' | 'motm' | 'substitution' | 'own_goal' | 'penalty_goal' | 'injury'
 export type Tiebreaker = 'gd' | 'gf' | 'h2h'
 export type KnockoutRound = 'quarter' | 'semi' | 'final'
+export type LeagueCategory = 'children' | 'adult'
 
 export interface League {
   id: string
@@ -12,6 +13,7 @@ export interface League {
   season: string
   format: LeagueFormat
   competition_type: CompetitionType
+  category?: LeagueCategory
   points_win: number
   points_draw: number
   points_loss: number
@@ -20,6 +22,14 @@ export interface League {
   num_teams: number
   num_groups?: number
   has_knockout?: boolean
+  created_at: string
+}
+
+export interface GlobalPlayer {
+  id: string
+  name: string
+  position: PlayerPosition
+  number?: number
   created_at: string
 }
 
@@ -66,6 +76,7 @@ export interface Match {
   home_penalties?: number
   away_penalties?: number
   created_at: string
+  motm_player_id?: string
 }
 
 export interface MatchEvent {

@@ -1,6 +1,6 @@
 export default {
   app: { name: 'Triple3E League Manager', subtitle: 'Manajemen Liga Manual PES' },
-  nav: { dashboard: 'Beranda', leagues: 'Liga', settings: 'Pengaturan' },
+  nav: { dashboard: 'Beranda', leagues: 'Liga', players: 'Pemain', settings: 'Pengaturan' },
   league: {
     create: 'Buat Liga',
     edit: 'Edit Liga',
@@ -22,6 +22,9 @@ export default {
     status: 'Status',
     active: 'Aktif',
     completed: 'Selesai',
+    category: 'Kategori',
+    children: 'Anak-Anak',
+    adult: 'Dewasa',
     delete_confirm: 'Yakin hapus liga ini?',
   },
   team: {
@@ -46,6 +49,12 @@ export default {
     suspensions: 'Akumulasi Kartu',
     yellow_cards: 'Kartu Kuning',
     red_cards: 'Kartu Merah',
+    global: 'Semua Pemain',
+    add_global: 'Tambah Pemain Baru',
+    select_from_global: 'Pilih dari Tersimpan',
+    import_from_global: 'Ambil dari data pemain',
+    search_global: 'Cari pemain...',
+    injury: 'Cedera',
   },
   match: {
     fixtures: 'Jadwal',
@@ -72,6 +81,15 @@ export default {
     select_player: 'Pilih Pemain',
     available_matches: 'Pertandingan Tersedia',
     filter_by_team: 'Filter berdasarkan tim yang hadir',
+    goal_scorer: 'Pencetak Gol',
+    goal_assist: 'Assist (opsional)',
+    card_type: 'Jenis Kartu',
+    match_events: 'Kronologi Pertandingan',
+    injury: 'Cedera',
+    injured_player: 'Pemain Cedera',
+    stats: 'Statistik Pertandingan',
+    home_goals: 'Gol Tuan Rumah',
+    away_goals: 'Gol Tamu',
   },
   standing: {
     title: 'Klasemen',
