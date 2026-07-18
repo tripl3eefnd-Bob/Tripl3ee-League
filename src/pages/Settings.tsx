@@ -47,7 +47,7 @@ export default function Settings() {
             {t.settings.about}
           </h2>
           <p className="text-sm text-slate-400 mt-2">
-            Triple3E League Manager v2.0.0
+            TRIPL3EE LEAGUE AND CUP v2.0.0
           </p>
           <p className="text-xs text-slate-500">
             Aplikasi manajemen liga manual untuk PES PS3.

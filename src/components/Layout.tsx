@@ -7,7 +7,7 @@ import { Trophy, Home, Settings, Moon, Sun, Languages, Users } from 'lucide-reac
 const navItems = [
   { path: '/', icon: Home, label: 'Beranda' },
   { path: '/leagues', icon: Trophy, label: 'Liga' },
-  { path: '/players', icon: Users, label: 'Pemain' },
+  { path: '/players', icon: Users, label: 'Peserta' },
   { path: '/settings', icon: Settings, label: 'Pengaturan' },
 ]
 
@@ -23,7 +23,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center h-12 lg:h-14 gap-2">
             <Link to="/" className="flex items-center gap-2 shrink-0">
               <Trophy className="w-5 h-5 text-yellow-400" />
-              <span className="font-bold text-sm lg:text-base text-white tracking-tight">Triple3E</span>
+              <span className="font-bold text-sm lg:text-base text-white tracking-tight">TRIPL3EE LEAGUE AND CUP</span>
             </Link>
 
             <nav className="flex items-center ml-4 gap-1">

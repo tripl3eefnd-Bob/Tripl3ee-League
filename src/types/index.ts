@@ -25,11 +25,10 @@ export interface League {
   created_at: string
 }
 
-export interface GlobalPlayer {
+export interface Participant {
   id: string
   name: string
-  position: PlayerPosition
-  number?: number
+  phone?: string
   created_at: string
 }
 
@@ -41,6 +40,7 @@ export interface Team {
   color: string
   logo_url?: string
   owner_name?: string
+  participant_id?: string
   created_at: string
 }
 

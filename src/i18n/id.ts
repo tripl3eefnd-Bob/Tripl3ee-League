@@ -1,6 +1,6 @@
 export default {
-  app: { name: 'Triple3E League Manager', subtitle: 'Manajemen Liga Manual PES' },
-  nav: { dashboard: 'Beranda', leagues: 'Liga', players: 'Pemain', settings: 'Pengaturan' },
+  app: { name: 'TRIPL3EE LEAGUE AND CUP', subtitle: 'Manajemen Liga Manual PES' },
+  nav: { dashboard: 'Beranda', leagues: 'Liga', participants: 'Peserta', settings: 'Pengaturan' },
   league: {
     create: 'Buat Liga',
     edit: 'Edit Liga',

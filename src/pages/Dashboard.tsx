@@ -22,7 +22,7 @@ export default function Dashboard() {
       <div className="flex items-center justify-between mb-5">
         <div>
           <h1 className="text-lg font-bold text-white">Dashboard</h1>
-          <p className="text-xs text-slate-500 mt-0.5">Triple3E League Manager</p>
+          <p className="text-xs text-slate-500 mt-0.5">TRIPL3EE LEAGUE AND CUP</p>
         </div>
         <Link
           to="/leagues/new"

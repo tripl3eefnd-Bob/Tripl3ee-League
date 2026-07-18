@@ -1,7 +1,7 @@
 import { supabase } from './supabase'
 import type {
   League, Team, Player, Match, MatchEvent, PlayerRating,
-  PlayerSuspension, HallOfFameEntry, SeasonArchive, GlobalPlayer,
+  PlayerSuspension, HallOfFameEntry, SeasonArchive, Participant,
 } from '../types'
 
 // --- LEAGUES ---
@@ -49,7 +49,7 @@ export async function deleteTeam(id: string) {
   await supabase.from('teams').delete().eq('id', id)
 }
 
-// --- PLAYERS ---
+// --- FOOTBALL PLAYERS (within a team) ---
 export async function getPlayers(teamId: string) {
   const { data } = await supabase.from('players').select('*').eq('team_id', teamId).order('number')
   return data as Player[] | null
@@ -78,37 +78,24 @@ export async function deletePlayer(id: string) {
   await supabase.from('players').delete().eq('id', id)
 }
 
-// --- GLOBAL PLAYERS ---
-export async function getGlobalPlayers() {
-  const { data } = await supabase.from('global_players').select('*').order('name')
-  return data as GlobalPlayer[] | null
+// --- PARTICIPANTS (league contestants / customers) ---
+export async function getParticipants() {
+  const { data } = await supabase.from('participants').select('*').order('name')
+  return data as Participant[] | null
 }
 
-export async function createGlobalPlayer(player: Omit<GlobalPlayer, 'id' | 'created_at'>) {
-  const { data } = await supabase.from('global_players').insert(player).select().single()
-  return data as GlobalPlayer | null
+export async function createParticipant(p: Omit<Participant, 'id' | 'created_at'>) {
+  const { data } = await supabase.from('participants').insert(p).select().single()
+  return data as Participant | null
 }
 
-export async function updateGlobalPlayer(id: string, updates: Partial<GlobalPlayer>) {
-  const { data } = await supabase.from('global_players').update(updates).eq('id', id).select().single()
-  return data as GlobalPlayer | null
+export async function updateParticipant(id: string, updates: Partial<Participant>) {
+  const { data } = await supabase.from('participants').update(updates).eq('id', id).select().single()
+  return data as Participant | null
 }
 
-export async function deleteGlobalPlayer(id: string) {
-  await supabase.from('global_players').delete().eq('id', id)
-}
-
-export async function importGlobalPlayerToTeam(globalPlayerId: string, teamId: string, number: number) {
-  const { data: gp } = await supabase.from('global_players').select('*').eq('id', globalPlayerId).single()
-  if (!gp) return null
-  const player = await createPlayer({
-    team_id: teamId,
-    name: gp.name,
-    number,
-    position: gp.position,
-    is_active: true,
-  })
-  return player
+export async function deleteParticipant(id: string) {
+  await supabase.from('participants').delete().eq('id', id)
 }
 
 // --- MATCHES ---
@@ -143,11 +130,7 @@ export async function deleteMatch(id: string) {
 
 // --- MATCH EVENTS ---
 export async function getMatchEvents(matchId: string) {
-  const { data } = await supabase
-    .from('match_events')
-    .select('*')
-    .eq('match_id', matchId)
-    .order('minute')
+  const { data } = await supabase.from('match_events').select('*').eq('match_id', matchId).order('minute')
   return data as MatchEvent[] | null
 }
 
@@ -187,17 +170,13 @@ export async function upsertPlayerRating(rating: Omit<PlayerRating, 'id'>) {
   const { data } = await supabase
     .from('player_ratings')
     .upsert(rating, { onConflict: 'match_id,player_id' })
-    .select()
-    .single()
+    .select().single()
   return data as PlayerRating | null
 }
 
 // --- SUSPENSIONS ---
 export async function getSuspensions(leagueId: string) {
-  const { data } = await supabase
-    .from('player_suspensions')
-    .select('*')
-    .eq('league_id', leagueId)
+  const { data } = await supabase.from('player_suspensions').select('*').eq('league_id', leagueId)
   return data as PlayerSuspension[] | null
 }
 
@@ -205,18 +184,13 @@ export async function upsertSuspension(s: Omit<PlayerSuspension, 'id'>) {
   const { data } = await supabase
     .from('player_suspensions')
     .upsert(s, { onConflict: 'player_id,league_id' })
-    .select()
-    .single()
+    .select().single()
   return data as PlayerSuspension | null
 }
 
 // --- HALL OF FAME ---
 export async function getHallOfFame(leagueId: string) {
-  const { data } = await supabase
-    .from('hall_of_fame')
-    .select('*')
-    .eq('league_id', leagueId)
-    .order('value', { ascending: false })
+  const { data } = await supabase.from('hall_of_fame').select('*').eq('league_id', leagueId).order('value', { ascending: false })
   return data as HallOfFameEntry[] | null
 }
 
@@ -227,11 +201,7 @@ export async function createHallOfFameEntry(entry: Omit<HallOfFameEntry, 'id' | 
 
 // --- ARCHIVES ---
 export async function getArchives(leagueId: string) {
-  const { data } = await supabase
-    .from('season_archives')
-    .select('*')
-    .eq('league_id', leagueId)
-    .order('archived_at', { ascending: false })
+  const { data } = await supabase.from('season_archives').select('*').eq('league_id', leagueId).order('archived_at', { ascending: false })
   return data as SeasonArchive[] | null
 }
 

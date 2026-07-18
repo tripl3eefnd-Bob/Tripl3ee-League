@@ -248,7 +248,7 @@ export default function FixturesTab({ league, teams, matches, onMatchesChange }:
                     <div className="flex-1 flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: home?.color || '#666' }} />
                       <span className={`text-sm font-medium ${isPlayed ? 'text-white' : 'text-slate-300'}`}>
-                        {home?.short_name || home?.name}
+                        {home?.name}
                       </span>
                     </div>
 
@@ -282,7 +282,7 @@ export default function FixturesTab({ league, teams, matches, onMatchesChange }:
 
                     <div className="flex-1 flex items-center justify-end gap-2">
                       <span className={`text-sm font-medium ${isPlayed ? 'text-white' : 'text-slate-300'}`}>
-                        {away?.short_name || away?.name}
+                        {away?.name}
                       </span>
                       <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: away?.color || '#666' }} />
                     </div>

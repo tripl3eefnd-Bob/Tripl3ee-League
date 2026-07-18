@@ -1,6 +1,6 @@
 export default {
-  app: { name: 'Triple3E League Manager', subtitle: 'PES Manual League Manager' },
-  nav: { dashboard: 'Dashboard', leagues: 'Leagues', players: 'Players', settings: 'Settings' },
+  app: { name: 'TRIPL3EE LEAGUE AND CUP', subtitle: 'PES Manual League Manager' },
+  nav: { dashboard: 'Dashboard', leagues: 'Leagues', participants: 'Participants', settings: 'Settings' },
   league: {
     create: 'Create League',
     edit: 'Edit League',
